@@ -1,6 +1,4 @@
 from bs4 import BeautifulSoup
-from docx import Document
-from docx.text.paragraph import Paragraph
 from docxtpl import DocxTemplate
 import requests
 
