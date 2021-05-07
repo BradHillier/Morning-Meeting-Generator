@@ -1,2 +1,3 @@
 beautifulsoup
 requests
+docxtpl
