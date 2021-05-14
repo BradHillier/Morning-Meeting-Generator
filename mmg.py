@@ -28,7 +28,7 @@ class Weather:
 
     def __str__(self):
         attrs = [
-            self.date.strftime('%a %-I %p'),
+            self.date.strftime('%-I %p'),
             self.description,
             self.temp + u'\N{DEGREE SIGN}' + 'C',
             self.wind
@@ -47,9 +47,16 @@ class Tide:
 
 
 def main():
-    weather = get_weather(10, 17)
-    print('\n'.join(str(x) for x in weather))
+    info = {
+        'Weather': get_weather(10, 17),
+        'Tides': get_tides()
+    }
+    datestring = datetime.now().strftime('%A - %B %d - %Y')
 
+    print(f'\nMORNING MEETING\n{datestring}\n')
+    for title, data in info.items():
+        print(title)
+        print('\t' + '\n\t'.join(str(x) for x in data) + '\n')
 
 
 def get_tides() -> list:
@@ -59,9 +66,13 @@ def get_tides() -> list:
     """
     res = requests.get('https://tides.gc.ca/eng/station?sid=7460')
     soup = BeautifulSoup(res.content, 'html.parser')
+
     time = soup.table.tbody.findAll('td', class_='time')
-    height = soup.table.tbody.findAll('td', class_='heightMeters')
-    return [(time[i].text, height[i].text) for i in range(len(time))]
+    meters = soup.table.tbody.findAll('td', class_='heightMeters')
+    feet = soup.table.tbody.findAll('td', class_='heightFeet')
+
+    return [Tide(time[i].text, meters[i].text, feet[i].text,) \
+            for i in range(len(time))]
 
 
 def get_weather(start_time: int, end_time: int) -> list:
@@ -76,9 +87,10 @@ def get_weather(start_time: int, end_time: int) -> list:
     url = 'https://www.theweathernetwork.com/ca/hourly-weather-forecast/british-columbia/ladysmith'
     browser = webdriver.Safari()
     browser.get(url)
-    browser.implicitly_wait(2)
+    browser.implicitly_wait(1)
     raw_hourly_weather = browser.find_elements_by_class_name('wxColumn-hourly')
-    hourly_weather = [parse_weather_from_webelement(element) for element in raw_hourly_weather]
+    hourly_weather = [parse_weather_from_webelement(element) \
+                      for element in raw_hourly_weather]
 
     return [weather for weather in hourly_weather if
             start_time <= weather.date.hour <= end_time and \
@@ -103,7 +115,8 @@ def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement
 def next_occurence(weekday, time) -> datetime:
     """
     dateparser weeks start on a saturday; when parsing without this it would
-    not output the previous occurence if the current day was 
+    output the previous occurence if the weekday was less than
+    now.weekday() in value()
     """
     now = datetime.now()
     date = dateparser.parse(' '.join([weekday, time]))
