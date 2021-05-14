@@ -1,11 +1,54 @@
+"""
+created by Brad Hillier - BradleyHillier@icloud.com
+this file was created to generate the morning meeting document for
+Sealegs Kayaking Adventures in Ladysmith, BC
+
+Tides are scraped off of canadian government website using beautiful soup
+Weather data is scraped off of the Weather Network using selenium
+"""
+
+
 from bs4 import BeautifulSoup
 from docxtpl import DocxTemplate
+from selenium import webdriver
+from dataclasses import dataclass
+from datetime import datetime
 import requests
+import dateparser
+
+from convert_date import *
+
+
+@dataclass
+class Weather:
+    date: datetime
+    description: str
+    temp: str
+    wind: str
+
+    def __str__(self):
+        attrs = [
+            self.date.strftime('%a %-I %p'),
+            self.description,
+            self.temp + u'\N{DEGREE SIGN}' + 'C',
+            self.wind
+        ]
+        return ' - '.join(attrs)
+
+@dataclass
+class Tide:
+    time: datetime
+    meters: int
+    feet: int
+
+    def __str__(self):
+        return f'{self.meters}m @ {self.time}'
 
 
 def main():
-    create_document()
-
+    weather = get_weather()
+    for i in weather:
+        print(i)
 
 def get_tides() -> list:
     """
@@ -18,38 +61,46 @@ def get_tides() -> list:
     height = soup.table.tbody.findAll('td', class_='heightMeters')
     return [(time[i].text, height[i].text) for i in range(len(time))]
 
-
 def get_weather() -> list:
     """
-    return: [(time, temperature, conditions, chance_of_percip, wind),...]
+    No APIs I looked at offered hourly weather data for free, and content is
+    loaded dynamically on "theweathernetwork.com".  because of this it was 
+    necassary to use Selenium to scrape page contents.
     """
-    res = requests.get('https://weather.gc.ca/forecast/hourly/bc-20_metric_e.html')
-    soup = BeautifulSoup(res.content, 'html.parser')
+    url = 'https://www.theweathernetwork.com/ca/hourly-weather-forecast/british-columbia/ladysmith'
+    browser = webdriver.Safari()
+    browser.get(url)
+    browser.implicitly_wait(2)
+    wx_columns = browser.find_elements_by_class_name('wxColumn-hourly')
+    return [parse_weather_from_webelement(column) for column in wx_columns]
 
-    # Ignore First 'tr' which contains only the date 
-    table = soup.table.tbody.findAll('tr')[1:]
-    
-    # Remove rows that are not from current date
-    todays_conditions = []
-    for item in table:
-        if len(list(item.children)) != 1:
-            todays_conditions.append(item)
-        else:
-            # this will exit the loop on the next row containing only a date
-            break
+def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement) -> Weather:
+    """
+    Helper function for get_weather
+    """
+    weekday = column.find_element_by_class_name('day').text
+    time = column.find_element_by_class_name('date').text
+    description = column.find_element_by_xpath('.//*[@class="wx_description"]').text
+    date = next_occurence(weekday, time)
+    temp = column.find_element_by_xpath('.//*[@class="wxperiod_temp"]').text
+    wind = column.find_elements_by_class_name('stripeable')[2].text
+    return Weather(date, description, temp, wind)
 
-    # Parse relevant data from rows
-    hourly = []
-    for i in range(len(todays_conditions)):
-        rows = todays_conditions[i].findAll('td')
-        hourly.append([item.text.strip().replace('\xa0', ' ') for item in rows])
-
-    return hourly
-
+def next_occurence(weekday, time):
+    """
+    Return next occurence of the provided weekday and time
+    """
+    now = datetime.now()
+    date = dateparser.parse(' '.join([weekday, time]))
+    if date.day - now.day < 0:
+        return dateparser.parse(' '.join([weekday, time]), 
+                                settings={'PREFER_DATES_FROM': 'future'})
+    else:
+        return date
+            
 
 def create_document():
     template = DocxTemplate('morning_meeting_template.docx')
-
     tides = get_tides()
     table_contents = []
     for time, height in tides:
@@ -57,23 +108,8 @@ def create_document():
             'Time': time, 
             'Height': height
         })
-
     weather = get_weather()
-    weather_table_contents = []
-    for time, temp, cond, percip, wind in weather:
-        weather_table_contents.append({
-            'Time': time,
-            'Temp': temp,
-            'Conditions': cond,
-            'Wind': wind
-        })
 
-    context = {
-        'table_contents': table_contents,
-        'weather_table_contents': weather_table_contents
-    }
-    template.render(context)
-    template.save('generated_meeting.docx')
 
 
 if __name__ == '__main__':

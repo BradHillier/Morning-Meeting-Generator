@@ -1,3 +1,7 @@
 beautifulsoup
 requests
 docxtpl
+selenium
+dataclasses
+dateparser
+datetime
