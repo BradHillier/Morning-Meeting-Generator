@@ -45,10 +45,12 @@ class Tide:
         return f'{self.meters}m @ {self.time}'
 
 
+
 def main():
-    weather = get_weather()
-    for i in weather:
-        print(i)
+    weather = get_weather(10, 17)
+    print('\n'.join(str(x) for x in weather))
+
+
 
 def get_tides() -> list:
     """
@@ -61,18 +63,27 @@ def get_tides() -> list:
     height = soup.table.tbody.findAll('td', class_='heightMeters')
     return [(time[i].text, height[i].text) for i in range(len(time))]
 
-def get_weather() -> list:
+
+def get_weather(start_time: int, end_time: int) -> list:
     """
+    start_time: 0 <= hour <= 24
+    end_time: 0 <= hour <= 24
+
     No APIs I looked at offered hourly weather data for free, and content is
     loaded dynamically on "theweathernetwork.com".  because of this it was 
-    necassary to use Selenium to scrape page contents.
+    necessary to use web browser automation.
     """
     url = 'https://www.theweathernetwork.com/ca/hourly-weather-forecast/british-columbia/ladysmith'
     browser = webdriver.Safari()
     browser.get(url)
     browser.implicitly_wait(2)
-    wx_columns = browser.find_elements_by_class_name('wxColumn-hourly')
-    return [parse_weather_from_webelement(column) for column in wx_columns]
+    raw_hourly_weather = browser.find_elements_by_class_name('wxColumn-hourly')
+    hourly_weather = [parse_weather_from_webelement(element) for element in raw_hourly_weather]
+
+    return [weather for weather in hourly_weather if
+            start_time <= weather.date.hour <= end_time and \
+            weather.date.day == datetime.now().day]
+
 
 def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement) -> Weather:
     """
@@ -80,15 +91,19 @@ def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement
     """
     weekday = column.find_element_by_class_name('day').text
     time = column.find_element_by_class_name('date').text
-    description = column.find_element_by_xpath('.//*[@class="wx_description"]').text
+
     date = next_occurence(weekday, time)
+    description = column.find_element_by_xpath('.//*[@class="wx_description"]').text
     temp = column.find_element_by_xpath('.//*[@class="wxperiod_temp"]').text
     wind = column.find_elements_by_class_name('stripeable')[2].text
+
     return Weather(date, description, temp, wind)
 
-def next_occurence(weekday, time):
+
+def next_occurence(weekday, time) -> datetime:
     """
-    Return next occurence of the provided weekday and time
+    dateparser weeks start on a saturday; when parsing without this it would
+    not output the previous occurence if the current day was 
     """
     now = datetime.now()
     date = dateparser.parse(' '.join([weekday, time]))
