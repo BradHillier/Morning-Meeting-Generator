@@ -1,10 +1,7 @@
 """
 created by Brad Hillier - BradleyHillier@icloud.com
-this file was created to generate the morning meeting document for
-Sealegs Kayaking Adventures in Ladysmith, BC
-
-Tides are scraped off of canadian government website using beautiful soup
-Weather data is scraped off of the Weather Network using selenium
+generate the morning meeting document for Sealegs Kayaking Adventures 
+in Ladysmith, BC
 """
 
 
@@ -13,9 +10,18 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from docxtpl import DocxTemplate
+from docx import Document
 import requests
 import dateparser
 import pytz
+
+emoji = {
+    'Sunny': '☀️',
+    'Mainly sunny': '🌤',
+    'Partly cloudy': '\u26c5',
+    'A mix of sun and clouds': '⛅️'
+}
+    
 
 
 @dataclass
@@ -62,24 +68,45 @@ class Booking:
 
 
 def main():
-     info = {
-         'Tides': get_tides(),
-         'Weather': get_weather(10, 17),
-         'Bookings': get_bookings()
-     }
-     datestring = datetime.now().strftime('%A - %B %d - %Y')
+    datestring = datetime.now().strftime('%A - %B %d - %Y')
+    tides = get_tides()
+    weather = get_weather(10, 17)
+    bookings = get_bookings()
 
-     print(f'\nMORNING MEETING\n{datestring}\n')
-     for title, data in info.items():
-         print(title)
-         print('\t' + '\n\t'.join(str(x) for x in data) + '\n')
+    document = Document()
+    document.add_heading('Daily Safety Meeting', 0)
+    document.add_paragraph(datestring)
+
+    document.add_heading('Attendants', 2)
+
+    document.add_heading('Safety Topic', 2)
+    document.add_paragraph('\n' * 2)
+
+    document.add_heading('General Notes/Maintenance', 2)
+    document.add_paragraph('\n' * 2)
+
+    document.add_heading('Tides', 2)
+    document.add_paragraph('\n'.join(str(x) for x in tides))
+
+    document.add_heading('Weather', 2)
+    table = document.add_table(rows=4, cols=len(weather))
+    for i in range(len(table.columns)):
+        col = table.columns[i]
+        col.cells[0].text = weather[i].date.strftime('%-I %p')
+        col.cells[1].text = emoji[weather[i].description]
+        col.cells[2].text = weather[i].temp
+        col.cells[3].text = weather[i].wind
+
+    document.add_heading('Bookings', 2)
+    document.add_paragraph('\n'.join(str(x) for x in bookings))
+
+
+    document.save('test.docx')
 
 
 
 def get_tides() -> list:
-    '''
-    Retreive today's tides from 'Fisheries and Oceans Canada'
-    '''
+    '''Retreive today's tides from 'Fisheries and Oceans Canada'.'''
     res = requests.get('https://tides.gc.ca/eng/station?sid=7460')
     soup = BeautifulSoup(res.content, 'html.parser')
 
@@ -94,17 +121,17 @@ def get_tides() -> list:
             tide.time.day == datetime.now().day]
         
 
-
 # No APIs I looked at offered hourly weather data for free, and content is
 # loaded dynamically on "theweathernetwork.com".  because of this it was 
 # necessary to use web browser automation.
 def get_weather(start_time: int, end_time: int) -> list:
     '''
-    0 <= start_time < 24
-    0 <= end_time < 24
-
     Retrieve today's hourly weather data from 'The Weather Network' 
     for the provided time window
+
+    Arguments:
+    start_time -- the hour (0-23) to begin retrieving data
+    end_time -- the hour (0-23) to finish grabbing data (inclusive)
     '''
     url = 'https://www.theweathernetwork.com/ca/hourly-weather-forecast/british-columbia/ladysmith'
     browser = webdriver.Safari()
@@ -139,7 +166,7 @@ def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement
 # dateparser weeks appear to start on a saturday; when parsing without this 
 # it would output the previous occurence if the weekday was less than
 # now.weekday()
-def next_occurence(weekday, time) -> datetime:
+def next_occurence(weekday: str, time: str) -> datetime:
     '''
     Returns the next occurence of the provided weekday and time as a 
     datetime object
