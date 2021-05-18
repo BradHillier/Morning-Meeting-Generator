@@ -11,15 +11,20 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from docxtpl import DocxTemplate
 from docx import Document
+from time import sleep
 import requests
 import dateparser
 import pytz
 
 emoji = {
-    'Sunny': '☀️',
-    'Mainly sunny': '🌤',
+    'Sunny': '\u2600',
+    'Mainly sunny': '\U0001F324',
     'Partly cloudy': '\u26c5',
-    'A mix of sun and clouds': '⛅️'
+    'A mix of sun and clouds': '\U0001F324',
+    'Cloudy with showers': '\U0001F325',
+    'Cloudy with clear breaks': '\U0001F325',
+    'Chance of a shower': '\U0001F327',
+    'A few showers': '\U0001F327' 
 }
     
 
@@ -70,7 +75,7 @@ class Booking:
 def main():
     datestring = datetime.now().strftime('%A - %B %d - %Y')
     tides = get_tides()
-    weather = get_weather(10, 17)
+    weather = get_weather(10, 23)
     bookings = get_bookings()
 
     document = Document()
@@ -78,12 +83,9 @@ def main():
     document.add_paragraph(datestring)
 
     document.add_heading('Attendants', 2)
-
-    document.add_heading('Safety Topic', 2)
-    document.add_paragraph('\n' * 2)
-
-    document.add_heading('General Notes/Maintenance', 2)
-    document.add_paragraph('\n' * 2)
+    for section in ['Safety Topic', 'General Notes/Maintenance']:
+        document.add_heading(section, 2)
+        document.add_paragraph('\n' * 2)
 
     document.add_heading('Tides', 2)
     document.add_paragraph('\n'.join(str(x) for x in tides))
@@ -94,7 +96,7 @@ def main():
         col = table.columns[i]
         col.cells[0].text = weather[i].date.strftime('%-I %p')
         col.cells[1].text = emoji[weather[i].description]
-        col.cells[2].text = weather[i].temp
+        col.cells[2].text = weather[i].temp + u'\N{DEGREE SIGN}' + 'C',
         col.cells[3].text = weather[i].wind
 
     document.add_heading('Bookings', 2)
@@ -136,18 +138,51 @@ def get_weather(start_time: int, end_time: int) -> list:
     url = 'https://www.theweathernetwork.com/ca/hourly-weather-forecast/british-columbia/ladysmith'
     browser = webdriver.Safari()
     browser.get(url)
-    browser.implicitly_wait(1)
+    browser.implicitly_wait(10)
     raw_hourly_weather = browser.find_elements_by_class_name('wxColumn-hourly')
-    hourly_weather = [parse_weather_from_webelement(element) \
-                      for element in raw_hourly_weather]
+    wx_legend = browser.find_elements_by_class_name('legendColumn')
+    wind_index = find_wind_index(wx_legend)
+
+    # webelements on hidden tables were showing up with empty text in Chrome. 
+    # Clicking the button to show the next table solved this issue. 
+    # Issue did not exist when using the Safari driver. 
+    # Six hours of weather data are displayed in each table
+    hourly_weather = []
+    num_of_tables = int(len(raw_hourly_weather) / 6)
+    for i in range(num_of_tables):
+        for j in range(6):
+            curr_hour_wx = parse_weather_from_webelement(
+                raw_hourly_weather[6 * i + j], 
+                wind_index
+            )
+            if curr_hour_wx.date.hour >= start_time:
+                hourly_weather.append(curr_hour_wx)
+            if curr_hour_wx.date.hour == end_time:
+                break
+        else:
+            browser.find_element_by_class_name('hourlyforecast_data_table_ls_next').click()
+            sleep(0.5)
+            continue
+        break
+
     browser.quit()
-
-    return [weather for weather in hourly_weather if
-            start_time <= weather.date.hour <= end_time and \
-            weather.date.day == datetime.now().day]
+    return hourly_weather
 
 
-def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement) -> Weather:
+# Table rows are dynamically generated based on information relevant to current
+# days conditions
+def find_wind_index(wx_legend: webdriver.remote.webelement.WebElement) -> int:
+    '''
+    Helper Function for get_weather
+    Determine which table row contains wind data 
+    '''
+    for i in range(len(wx_legend)):
+        if wx_legend[i].text == 'Wind (km/h)':
+            return i
+
+
+def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement,
+                                  wind_index: int) -> Weather:
     '''
     Helper function for get_weather
     Parses data from a WebElement and creates a Weather object
@@ -158,12 +193,12 @@ def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement
     date = next_occurence(weekday, time)
     description = column.find_element_by_xpath('.//*[@class="wx_description"]').text
     temp = column.find_element_by_xpath('.//*[@class="wxperiod_temp"]').text
-    wind = column.find_elements_by_class_name('stripeable')[2].text
+    wind = column.find_elements_by_class_name('stripeable')[wind_index].text
 
     return Weather(date, description, temp, wind)
 
 
-# dateparser weeks appear to start on a saturday; when parsing without this 
+# dateparser weeks appear to start on a Saturday; when parsing without this 
 # it would output the previous occurence if the weekday was less than
 # now.weekday()
 def next_occurence(weekday: str, time: str) -> datetime:
@@ -185,8 +220,8 @@ def get_bookings() -> list:
     Retrieve bookings from timetree's API upcoming_events endpoint
     Returns only current days upcoming bookings
     '''
-    token = 'je4zug19qFWnsNx2zS0mKKzz6caBmCQE-aggHrlV0W5XPB4K'
-    cal_id = 'D5NwMz2JNMeV'
+    token = '6E-18RAX47fodf5dh3TPBpylbmXr9JmZ3mBkJ0V4bqe1It0n'
+    cal_id = 'Mw4DZK3sc72B'
     base_url = 'https://timetreeapis.com/'
     headers = {'accept': 'application/vnd.timetree.v1+json',
               'Authorization': f'Bearer {token}',
