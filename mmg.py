@@ -16,16 +16,7 @@ import requests
 import dateparser
 import pytz
 
-emoji = {
-    'Sunny': '\u2600',
-    'Mainly sunny': '\U0001F324',
-    'Partly cloudy': '\u26c5',
-    'A mix of sun and clouds': '\U0001F324',
-    'Cloudy with showers': '\U0001F325',
-    'Cloudy with clear breaks': '\U0001F325',
-    'Chance of a shower': '\U0001F327',
-    'A few showers': '\U0001F327' 
-}
+
     
 
 
@@ -75,7 +66,7 @@ class Booking:
 def main():
     datestring = datetime.now().strftime('%A - %B %d - %Y')
     tides = get_tides()
-    weather = get_weather(10, 23)
+    weather = get_weather(10, 17)
     bookings = get_bookings()
 
     document = Document()
@@ -95,7 +86,7 @@ def main():
     for i in range(len(table.columns)):
         col = table.columns[i]
         col.cells[0].text = weather[i].date.strftime('%-I %p')
-        col.cells[1].text = emoji[weather[i].description]
+        col.cells[1].text = emoji_from_description(weather[i].description)
         col.cells[2].text = weather[i].temp + u'\N{DEGREE SIGN}' + 'C',
         col.cells[3].text = weather[i].wind
 
@@ -109,7 +100,10 @@ def main():
 
 def get_tides() -> list:
     '''Retreive today's tides from 'Fisheries and Oceans Canada'.'''
-    res = requests.get('https://tides.gc.ca/eng/station?sid=7460')
+    now = datetime.now()
+    url = 'https://tides.gc.ca/eng/station?type=0&date={}%2F{}%2F{}&sid=7460&tz=PDT&pres=1'.format(
+        now.year, '%02d'%now.month, now.day)
+    res = requests.get(url)
     soup = BeautifulSoup(res.content, 'html.parser')
 
     time = soup.table.tbody.findAll('td', class_='time')
@@ -119,8 +113,7 @@ def get_tides() -> list:
     tides = [Tide(dateparser.parse(time[i].text), meters[i].text, feet[i].text,) \
             for i in range(len(time))]
 
-    return [tide for tide in tides if \
-            tide.time.day == datetime.now().day]
+    return [tide for tide in tides]
         
 
 # No APIs I looked at offered hourly weather data for free, and content is
@@ -139,7 +132,7 @@ def get_weather(start_time: int, end_time: int) -> list:
     browser = webdriver.Safari()
     browser.get(url)
     browser.implicitly_wait(10)
-    raw_hourly_weather = browser.find_elements_by_class_name('wxColumn-hourly')
+    raw_hourly_wx = browser.find_elements_by_class_name('wxColumn-hourly')
     wx_legend = browser.find_elements_by_class_name('legendColumn')
     wind_index = find_wind_index(wx_legend)
 
@@ -147,16 +140,17 @@ def get_weather(start_time: int, end_time: int) -> list:
     # Clicking the button to show the next table solved this issue. 
     # Issue did not exist when using the Safari driver. 
     # Six hours of weather data are displayed in each table
-    hourly_weather = []
-    num_of_tables = int(len(raw_hourly_weather) / 6)
+    hourly_wx = []
+    hours_per_table = 6
+    num_of_tables = int(len(raw_hourly_wx) / hours_per_table)
     for i in range(num_of_tables):
-        for j in range(6):
+        for j in range(hours_per_table):
             curr_hour_wx = parse_weather_from_webelement(
-                raw_hourly_weather[6 * i + j], 
+                raw_hourly_wx[hours_per_table * i + j], 
                 wind_index
             )
             if curr_hour_wx.date.hour >= start_time:
-                hourly_weather.append(curr_hour_wx)
+                hourly_wx.append(curr_hour_wx)
             if curr_hour_wx.date.hour == end_time:
                 break
         else:
@@ -166,7 +160,7 @@ def get_weather(start_time: int, end_time: int) -> list:
         break
 
     browser.quit()
-    return hourly_weather
+    return hourly_wx
 
 
 # Table rows are dynamically generated based on information relevant to current
@@ -213,6 +207,48 @@ def next_occurence(weekday: str, time: str) -> datetime:
                                 settings={'PREFER_DATES_FROM': 'future'})
     else:
         return date
+    
+
+def emoji_from_description(description: str) -> str:
+    '''Return a weather emoji depicting the provided description'''
+
+    # sun
+    if description == 'Sunny': 
+        return '\u2600' 
+
+    # sun behind small cloud
+    if description == 'Mainly sunny': 
+        return '\U0001F324'
+
+    # sun behind cloud
+    if description in ('A mix of sun and clouds', 'Partly cloudy'): 
+        return '\u26c5' 
+
+    # sun behind large cloud
+    if description in ('Cloudy with clear breaks'):
+        return '\U0001F325'
+
+    # sun behind rain cloud
+    if description == 'Chance of a shower':
+        return '\U0001F326'
+
+    # cloud with rain
+    if description in ('Cloudy with showers', 'A few showers', 'Light rain'): 
+        return '\U0001F327'
+
+    # crescent moon
+    if description in ('Clear', 'Mainly clear'): 
+        return '\U0001F317' # crescent moon
+
+    # cloud
+    if description == 'Mainly cloudy': 
+        return '\u2601' 
+
+    # red question mark
+    with open('mmg.log', 'a') as f:
+        now_str = datetime.now().strftime('%x %X')
+        f.write(f'{now_str} unknown weather description "{description}"')
+    return '\u2753'
 
 
 def get_bookings() -> list:
