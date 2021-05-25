@@ -1,2 +1,8 @@
 generated_meeting.docx
 mmg.log
+.mmg.conf.swp
+.mmg.py.swo
+.mmg.py.swp
+__pycache__/
+mmg.conf
+output/
