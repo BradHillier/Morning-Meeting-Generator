@@ -75,6 +75,9 @@ def main():
     document.add_paragraph(datestring)
 
     document.add_heading('Attendants', 2)
+    p = document.add_paragraph()
+    for name in ['Sheryll', 'Brad', 'Emery', 'Quinn', 'Ryan', 'Kamryn']:
+        p.add_run(f'\u2751 {name}\t\t')
     for section in ['Safety Topic', 'General Notes/Maintenance']:
         document.add_heading(section, 2)
         document.add_paragraph('\n' * 2)
