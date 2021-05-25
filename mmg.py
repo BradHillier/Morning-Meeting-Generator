@@ -111,7 +111,8 @@ def main():
         row_cells[1].text = booking.title
 
 
-    document.save('test.docx')
+    document.save(CONFIG['output location'] + 'morning_meeting_' + 
+                  datetime.now().strftime('%d-%m-%y') + '.docx')
 
 
 def load_config():
@@ -127,7 +128,7 @@ def load_config():
                 if ':' in line:
                     key, value = (x.strip() for x in line.split(':'))
                     if key == 'employees':
-                        value = [employee for employee in value.split(',')]
+                        value = [employee.strip() for employee in value.split(',')]
                     CONFIG[key] = value
 
 
