@@ -1,6 +1,6 @@
 beautifulsoup
 requests
-docxtpl
+python-docx
 selenium
 dataclasses
 dateparser
