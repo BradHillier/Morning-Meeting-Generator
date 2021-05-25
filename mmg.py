@@ -5,6 +5,7 @@ in Ladysmith, BC
 """
 
 
+
 from dataclasses import dataclass, field
 from datetime import datetime
 from bs4 import BeautifulSoup
@@ -79,7 +80,12 @@ def main():
         document.add_paragraph('\n' * 2)
 
     document.add_heading('Tides', 2)
-    document.add_paragraph('\n'.join(str(x) for x in tides))
+    tides_table = document.add_table(rows=0, cols=3)
+    for tide in tides:
+        row_cells = tides_table.add_row().cells
+        row_cells[0].text = tide.time.strftime('%-I:%M %p')
+        row_cells[1].text = f'{tide.meters} meters'
+        row_cells[2].text = f'{tide.feet} feet'
 
     document.add_heading('Weather', 2)
     wx_table = document.add_table(rows=4, cols=len(weather))
