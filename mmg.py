@@ -77,7 +77,7 @@ def main():
     document.add_heading('Attendants', 2)
     p = document.add_paragraph()
     for name in ['Sheryll', 'Brad', 'Emery', 'Quinn', 'Ryan', 'Kamryn']:
-        p.add_run(f'\u2751 {name}\t\t')
+        p.add_run(f'\u2751 {name}        ')
     for section in ['Safety Topic', 'General Notes/Maintenance']:
         document.add_heading(section, 2)
         document.add_paragraph('\n' * 2)
@@ -164,10 +164,9 @@ def get_weather(start_time: int, end_time: int) -> list:
                 raw_hourly_wx[hours_per_table * i + j], 
                 wind_index
             )
-            if curr_hour_wx.date.hour >= start_time and \
-                curr_hour_wx.date.hour <= end_time:
+            if curr_hour_wx.date.hour >= start_time:
                 hourly_wx.append(curr_hour_wx)
-            else:
+            if curr_hour_wx.date.hour == end_time:
                 break
         else:
             browser.find_element_by_class_name('hourlyforecast_data_table_ls_next').click()
