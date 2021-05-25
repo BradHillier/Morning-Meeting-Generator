@@ -16,6 +16,7 @@ from time import sleep
 import requests
 import dateparser
 import pytz
+import os.path
 
 
     
@@ -65,6 +66,7 @@ class Booking:
 
 
 def main():
+    load_config()
     datestring = datetime.now().strftime('%A - %B %d - %Y')
     tides = get_tides()
     weather = get_weather(10, 17)
@@ -76,7 +78,7 @@ def main():
 
     document.add_heading('Attendants', 2)
     p = document.add_paragraph()
-    for name in ['Sheryll', 'Brad', 'Emery', 'Quinn', 'Ryan', 'Kamryn']:
+    for name in CONFIG['employees']:
         p.add_run(f'\u2751 {name}        ')
     for section in ['Safety Topic', 'General Notes/Maintenance']:
         document.add_heading(section, 2)
@@ -100,7 +102,7 @@ def main():
         col.cells[3].text = weather[i].wind
 
     document.add_heading('Bookings', 2)
-    bookings_table = document.add_table(rows=1, cols=2)
+    bookings_table = document.add_table(rows=0, cols=2)
     for booking in bookings:
         row_cells = bookings_table.add_row().cells
         start = booking.start_at.strftime('%-I %p')
@@ -111,6 +113,22 @@ def main():
 
     document.save('test.docx')
 
+
+def load_config():
+    conf_file = 'mmg.conf'
+    global CONFIG 
+    CONFIG = dict()
+    if not os.path.isfile(conf_file):
+        print('File does not exist')
+    else:
+        with open (conf_file, 'r') as f:
+            content = f.read().splitlines()
+            for line in content:
+                if ':' in line:
+                    key, value = (x.strip() for x in line.split(':'))
+                    if key == 'employees':
+                        value = [employee for employee in value.split(',')]
+                    CONFIG[key] = value
 
 
 def get_tides() -> list:
@@ -275,8 +293,8 @@ def get_bookings() -> list:
     Retrieve bookings from timetree's API upcoming_events endpoint
     Returns only current days upcoming bookings
     '''
-    token = '6E-18RAX47fodf5dh3TPBpylbmXr9JmZ3mBkJ0V4bqe1It0n'
-    cal_id = 'Mw4DZK3sc72B'
+    token = CONFIG['personal access token']
+    cal_id = CONFIG['calendar ID']
     base_url = 'https://timetreeapis.com/'
     headers = {'accept': 'application/vnd.timetree.v1+json',
               'Authorization': f'Bearer {token}',
@@ -287,7 +305,8 @@ def get_bookings() -> list:
     bookings = [create_booking_obj(raw) for raw in raw_bookings]
 
     return [booking for booking in bookings if \
-           booking.start_at.day == datetime.now.day()]
+           booking.start_at.day == datetime.now().day]
+        
 
 
 def create_booking_obj(raw_event: dict) -> Booking:
