@@ -82,16 +82,22 @@ def main():
     document.add_paragraph('\n'.join(str(x) for x in tides))
 
     document.add_heading('Weather', 2)
-    table = document.add_table(rows=4, cols=len(weather))
-    for i in range(len(table.columns)):
-        col = table.columns[i]
+    wx_table = document.add_table(rows=4, cols=len(weather))
+    for i in range(len(wx_table.columns)):
+        col = wx_table.columns[i]
         col.cells[0].text = weather[i].date.strftime('%-I %p')
         col.cells[1].text = emoji_from_description(weather[i].description)
         col.cells[2].text = weather[i].temp + u'\N{DEGREE SIGN}' + 'C',
         col.cells[3].text = weather[i].wind
 
     document.add_heading('Bookings', 2)
-    document.add_paragraph('\n'.join(str(x) for x in bookings))
+    bookings_table = document.add_table(rows=1, cols=2)
+    for booking in bookings:
+        row_cells = bookings_table.add_row().cells
+        start = booking.start_at.strftime('%-I %p')
+        end = booking.end_at.strftime('%-I %p')
+        row_cells[0].text = f'{start} to {end}'
+        row_cells[1].text = booking.title
 
 
     document.save('test.docx')
@@ -149,9 +155,10 @@ def get_weather(start_time: int, end_time: int) -> list:
                 raw_hourly_wx[hours_per_table * i + j], 
                 wind_index
             )
-            if curr_hour_wx.date.hour >= start_time:
+            if curr_hour_wx.date.hour >= start_time and \
+                curr_hour_wx.date.hour <= end_time:
                 hourly_wx.append(curr_hour_wx)
-            if curr_hour_wx.date.hour == end_time:
+            else:
                 break
         else:
             browser.find_element_by_class_name('hourlyforecast_data_table_ls_next').click()
@@ -225,7 +232,7 @@ def emoji_from_description(description: str) -> str:
         return '\u26c5' 
 
     # sun behind large cloud
-    if description in ('Cloudy with clear breaks'):
+    if description in ('Cloudy with clear breaks', 'Cloudy with sunny breaks'):
         return '\U0001F325'
 
     # sun behind rain cloud
@@ -244,10 +251,14 @@ def emoji_from_description(description: str) -> str:
     if description == 'Mainly cloudy': 
         return '\u2601' 
 
+    # fog
+    if description == 'Fog patches':
+        return '\U0001F329'
+
     # red question mark
     with open('mmg.log', 'a') as f:
         now_str = datetime.now().strftime('%x %X')
-        f.write(f'{now_str} unknown weather description "{description}"')
+        f.write(f'\n{now_str} unknown weather description "{description}"')
     return '\u2753'
 
 
@@ -268,7 +279,7 @@ def get_bookings() -> list:
     bookings = [create_booking_obj(raw) for raw in raw_bookings]
 
     return [booking for booking in bookings if \
-            booking.start_at.day == datetime.now().day]
+           booking.start_at.day == datetime.now.day()]
 
 
 def create_booking_obj(raw_event: dict) -> Booking:
@@ -277,13 +288,13 @@ def create_booking_obj(raw_event: dict) -> Booking:
     Converts raw booking data into Booking object
     '''
     timezone = pytz.timezone('America/Vancouver')
-    attrs = [
-        raw_event['attributes']['title'],
-        dateparser.parse(raw_event['attributes']['start_at']).astimezone(timezone),
-        dateparser.parse(raw_event['attributes']['end_at']).astimezone(timezone),
-        raw_event['attributes']['description']
-    ]
-    return Booking(*attrs)
+
+    title = raw_event['attributes']['title'],
+    start = dateparser.parse(raw_event['attributes']['start_at']).astimezone(timezone)
+    end = dateparser.parse(raw_event['attributes']['end_at']).astimezone(timezone)
+    des = raw_event['attributes']['description'] or ''
+
+    return Booking(title, start, end, des)
 
 
 
