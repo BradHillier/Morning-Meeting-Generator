@@ -1,5 +1,7 @@
 """
 created by Brad Hillier - BradleyHillier@icloud.com
+https://github.com/BradHillier/morning-meeting-generator
+
 generate the morning meeting document for Sealegs Kayaking Adventures 
 in Ladysmith, BC
 """
@@ -10,14 +12,18 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from docxtpl import DocxTemplate
 from docx import Document
 from time import sleep
 import requests
 import dateparser
 import pytz
 import os.path
+import json
+import sys
+import logging
 
+logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
+                    level=logging.INFO, filename='mmg.log', filemode='a')
 
     
 
@@ -66,6 +72,7 @@ class Booking:
 
 
 def main():
+    logging.info('program started')
     load_config()
     datestring = datetime.now().strftime('%A - %B %d - %Y')
     tides = get_tides()
@@ -110,26 +117,56 @@ def main():
         row_cells[0].text = f'{start} to {end}'
         row_cells[1].text = booking.title
 
-
-    document.save(CONFIG['output location'] + 'morning_meeting_' + 
-                  datetime.now().strftime('%d-%m-%y') + '.docx')
+    try:
+        document.save(CONFIG['output location'] + 'morning_meeting_' + 
+                      datetime.now().strftime('%d-%m-%y') + '.docx')
+    except FileNotFoundError:
+        logging.error('invalid output location, path to directory does not exist')
+        sys.exit()
+    logging.info('document successfully created')
 
 
 def load_config():
-    conf_file = 'mmg.conf'
+    '''Load or create a config file'''
+    try:
+        with open('config.json') as f:
+            global CONFIG 
+            CONFIG = json.load(f)
+    except FileNotFoundError:
+        print('config file not found')
+        generate_config_file()
+    except json.JSONDecodeError:
+        print('corrupted config file')
+        if get_bool_from_user('Create new config file? [Y\\n]'):
+            generate_config_file()
+        else:
+            print('Exiting program')
+            sys.exit()
+
+def get_bool_from_user(message: str, default=True) -> bool:
+    user_input = None
+    true = set(('y', 'yes', 't', 'true', '1'))
+    false = set(('n', 'no', 'f', 'false', '0'))
+    true.add('') if default else false.add('')
+    while user_input not in true.union(false):
+        user_input = input(message).lower()
+    return True if user_input in true else False
+        
+
+def generate_config_file():
     global CONFIG 
     CONFIG = dict()
-    if not os.path.isfile(conf_file):
-        print('File does not exist')
-    else:
-        with open (conf_file, 'r') as f:
-            content = f.read().splitlines()
-            for line in content:
-                if ':' in line:
-                    key, value = (x.strip() for x in line.split(':'))
-                    if key == 'employees':
-                        value = [employee.strip() for employee in value.split(',')]
-                    CONFIG[key] = value
+    print('\nEMPLOYEES')
+    CONFIG['employees'] = [] 
+    while get_bool_from_user('add employee [Y\\n]'):
+        CONFIG['employees'].append(input('employee: '))
+
+    CONFIG['personal access token'] = input('personal access token: ')
+    CONFIG['calendar ID'] = input('calendar ID: ')
+    CONFIG['output location'] = input('path to output folder: ')
+    with open('config.json', 'w') as f:
+        json.dump(CONFIG, f, indent=2)
+
 
 
 def get_tides() -> list:
@@ -138,6 +175,7 @@ def get_tides() -> list:
     url = 'https://tides.gc.ca/eng/station?type=0&date={}%2F{}%2F{}&sid=7460&tz=PDT&pres=1'.format(
         now.year, '%02d'%now.month, now.day)
     res = requests.get(url)
+    log_response(res)
     soup = BeautifulSoup(res.content, 'html.parser')
 
     time = soup.table.tbody.findAll('td', class_='time')
@@ -189,6 +227,7 @@ def get_weather(start_time: int, end_time: int) -> list:
                 break
         else:
             browser.find_element_by_class_name('hourlyforecast_data_table_ls_next').click()
+            # content isn't available until after CSS animation is completed
             sleep(0.5)
             continue
         break
@@ -275,7 +314,7 @@ def emoji_from_description(description: str) -> str:
         return '\U0001F317' # crescent moon
 
     # cloud
-    if description == 'Mainly cloudy': 
+    if description in ('Cloudy',  'Mainly cloudy'): 
         return '\u2601' 
 
     # fog
@@ -283,9 +322,7 @@ def emoji_from_description(description: str) -> str:
         return '\U0001F329'
 
     # red question mark
-    with open('mmg.log', 'a') as f:
-        now_str = datetime.now().strftime('%x %X')
-        f.write(f'\n{now_str} unknown weather description "{description}"')
+    logging.warning(f'unknown weather description "{description}"')
     return '\u2753'
 
 
@@ -302,6 +339,8 @@ def get_bookings() -> list:
              }
     res = requests.get( f'{base_url}/calendars/{cal_id}/upcoming_events',
                        headers=headers)
+    log_response(res)
+
     raw_bookings = res.json()['data']
     bookings = [create_booking_obj(raw) for raw in raw_bookings]
 
@@ -317,13 +356,17 @@ def create_booking_obj(raw_event: dict) -> Booking:
     '''
     timezone = pytz.timezone('America/Vancouver')
 
-    title = raw_event['attributes']['title'],
+    title = raw_event['attributes']['title'] or ''
     start = dateparser.parse(raw_event['attributes']['start_at']).astimezone(timezone)
     end = dateparser.parse(raw_event['attributes']['end_at']).astimezone(timezone)
     des = raw_event['attributes']['description'] or ''
 
     return Booking(title, start, end, des)
 
+def log_response(res):
+    message = f'{res.status_code} {res.reason} {res.url}'
+    logging.info(message) if res.ok else logging.warning(message)
+    
 
 
 if __name__ == '__main__':
