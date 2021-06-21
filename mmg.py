@@ -22,6 +22,8 @@ import json
 import sys
 import logging
 
+import config
+
 logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
                     level=logging.INFO, filename='mmg.log', filemode='a')
 
@@ -59,25 +61,24 @@ class Tide:
 @dataclass 
 class Booking:
     title: str
+    all_day: bool
     start_at: datetime
     end_at: datetime
-    description: str = field(default=None)
 
     def __str__(self):
-        start = self.start_at.strftime('%-I %p')
-        end = self.end_at.strftime('%-I %p')
-        des = self.description.replace('\n', ' ')
-        return f'{self.title} from {start} to {end} - {des}'
+        start = self.start_at.strftime('%-I:%M %p')
+        end = self.end_at.strftime('%-I:%M %p')
+        return f'{self.title} from {start} to {end}'
 
 
 
 def main():
     logging.info('program started')
-    load_config()
+    config.load()
     datestring = datetime.now().strftime('%A - %B %d - %Y')
     tides = get_tides()
     weather = get_weather(10, 17)
-    bookings = get_bookings()
+    bookings = get_bookings(config.CONFIG('cal_id'))
 
     document = Document()
     document.add_heading('Daily Safety Meeting', 0)
@@ -85,7 +86,7 @@ def main():
 
     document.add_heading('Attendants', 2)
     p = document.add_paragraph()
-    for name in CONFIG['employees']:
+    for name in config.CONFIG['employees']:
         p.add_run(f'\u2751 {name}        ')
     for section in ['Safety Topic', 'General Notes/Maintenance']:
         document.add_heading(section, 2)
@@ -103,7 +104,7 @@ def main():
     wx_table = document.add_table(rows=4, cols=len(weather))
     for i in range(len(wx_table.columns)):
         col = wx_table.columns[i]
-        col.cells[0].text = weather[i].date.strftime('%-I %p')
+        col.cells[0].text = weather[i].date.strftime('%-I:%M %p')
         col.cells[1].text = emoji_from_description(weather[i].description)
         col.cells[2].text = weather[i].temp + u'\N{DEGREE SIGN}' + 'C',
         col.cells[3].text = weather[i].wind
@@ -112,61 +113,18 @@ def main():
     bookings_table = document.add_table(rows=0, cols=2)
     for booking in bookings:
         row_cells = bookings_table.add_row().cells
-        start = booking.start_at.strftime('%-I %p')
-        end = booking.end_at.strftime('%-I %p')
+        start = booking.start_at.strftime('%-I:%M %p')
+        end = booking.end_at.strftime('%-I:%M %p')
         row_cells[0].text = f'{start} to {end}'
         row_cells[1].text = booking.title
 
     try:
-        document.save(CONFIG['output location'] + 'morning_meeting_' + 
+        document.save(config.CONFIG['output location'] + 'morning_meeting_' + 
                       datetime.now().strftime('%d-%m-%y') + '.docx')
     except FileNotFoundError:
         logging.error('invalid output location, path to directory does not exist')
         sys.exit()
     logging.info('document successfully created')
-
-
-def load_config():
-    '''Load or create a config file'''
-    try:
-        with open('config.json') as f:
-            global CONFIG 
-            CONFIG = json.load(f)
-    except FileNotFoundError:
-        print('config file not found')
-        generate_config_file()
-    except json.JSONDecodeError:
-        print('corrupted config file')
-        if get_bool_from_user('Create new config file? [Y\\n]'):
-            generate_config_file()
-        else:
-            print('Exiting program')
-            sys.exit()
-
-def get_bool_from_user(message: str, default=True) -> bool:
-    user_input = None
-    true = set(('y', 'yes', 't', 'true', '1'))
-    false = set(('n', 'no', 'f', 'false', '0'))
-    true.add('') if default else false.add('')
-    while user_input not in true.union(false):
-        user_input = input(message).lower()
-    return True if user_input in true else False
-        
-
-def generate_config_file():
-    global CONFIG 
-    CONFIG = dict()
-    print('\nEMPLOYEES')
-    CONFIG['employees'] = [] 
-    while get_bool_from_user('add employee [Y\\n]'):
-        CONFIG['employees'].append(input('employee: '))
-
-    CONFIG['personal access token'] = input('personal access token: ')
-    CONFIG['calendar ID'] = input('calendar ID: ')
-    CONFIG['output location'] = input('path to output folder: ')
-    with open('config.json', 'w') as f:
-        json.dump(CONFIG, f, indent=2)
-
 
 
 def get_tides() -> list:
@@ -306,7 +264,7 @@ def emoji_from_description(description: str) -> str:
         return '\U0001F326'
 
     # cloud with rain
-    if description in ('Cloudy with showers', 'A few showers', 'Light rain'): 
+    if description in ('Rain', 'Cloudy with showers', 'A few showers', 'Light rain'): 
         return '\U0001F327'
 
     # crescent moon
@@ -326,19 +284,22 @@ def emoji_from_description(description: str) -> str:
     return '\u2753'
 
 
-def get_bookings() -> list:
+def get_bookings(cal_id) -> list:
     '''
     Retrieve bookings from timetree's API upcoming_events endpoint
     Returns only current days upcoming bookings
     '''
-    token = CONFIG['personal access token']
-    cal_id = CONFIG['calendar ID']
+    token = config.CONFIG['personal access token']
     base_url = 'https://timetreeapis.com/'
-    headers = {'accept': 'application/vnd.timetree.v1+json',
-              'Authorization': f'Bearer {token}',
-             }
+
     res = requests.get( f'{base_url}/calendars/{cal_id}/upcoming_events',
-                       headers=headers)
+        headers = {
+            'accept': 'application/vnd.timetree.v1+json',
+            'Authorization': f'Bearer {token}'
+        },
+        params = {
+            'timezone': 'America/Vancouver'
+        })
     log_response(res)
 
     raw_bookings = res.json()['data']
@@ -354,14 +315,19 @@ def create_booking_obj(raw_event: dict) -> Booking:
     Helper function for get_bookings
     Converts raw booking data into Booking object
     '''
-    timezone = pytz.timezone('America/Vancouver')
 
-    title = raw_event['attributes']['title'] or ''
-    start = dateparser.parse(raw_event['attributes']['start_at']).astimezone(timezone)
-    end = dateparser.parse(raw_event['attributes']['end_at']).astimezone(timezone)
-    des = raw_event['attributes']['description'] or ''
+    title = raw_event['attributes']['title']
+    all_day = raw_event['attributes']['all_day']
 
-    return Booking(title, start, end, des)
+    #  Timetree's API has start and end time for all day events as 00:00:00 UTC
+    start = dateparser.parse(raw_event['attributes']['start_at'])
+    end = dateparser.parse(raw_event['attributes']['end_at'])
+    if not all_day:
+        timezone = pytz.timezone('America/Vancouver')
+        start = start.astimezone(timezone)
+        end = end.astimezone(timezone)
+
+    return Booking(title, all_day, start, end)
 
 def log_response(res):
     message = f'{res.status_code} {res.reason} {res.url}'
