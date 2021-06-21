@@ -1,8 +1,12 @@
 generated_meeting.docx
 mmg.log
+config.json
 .mmg.conf.swp
 .mmg.py.swo
 .mmg.py.swp
 __pycache__/
 mmg.conf
 output/
+.mmg.py.swm
+.mmg.py.swn
+.tests.py.swp
