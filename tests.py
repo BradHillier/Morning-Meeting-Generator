@@ -96,25 +96,22 @@ class TestGetBookings(unittest.TestCase):
 
 
 class TestSafetyTopic(unittest.TestCase):
-    def setUp(self):
-        self.heat_stroke = [
-            Weather(datetime.now(), 'Sunny', 29, '10NE')
-            Weather(datetime.now(), 'Sunny', 30, '10NE')
-        ]
-        self.safety_topic = create_safety_topic(weather=self.heat_stroke)
-        self.no_heat_stroke = [
-            Weather(datetime.now(), 'Sunny', 29, '10NE')
-        ]
 
-    def tearDown(self):
-        return
-
-    def test_heat_stroke_warning(self):
-        self.safety_topic = create_safety_topic(weather=self.heat_stroke)
+    def test_heatstroke_warning(self):
+        self.safety_topic = create_safety_topic(
+            weather = [
+                Weather(datetime.now(), 'Sunny', 29, '10NE'),
+                Weather(datetime.now(), 'Sunny', 30, '10NE')
+            ]
+        )
         self.assertEqual(self.safety_topic, 'Heat Exhaustion')
 
-    def test_no_heat_stroke_warning(self):
-        self.safety_topic = create_safety_topic(weather=self.no_heat_stroke)
+    def test_no_heatstroke_warning(self):
+        self.safety_topic = create_safety_topic(
+            weather = [
+                Weather(datetime.now(), 'Sunny', 29, '10NE')
+            ]
+        )
         self.assertEqual(self.safety_topic, '')
 
 
