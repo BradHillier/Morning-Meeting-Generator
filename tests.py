@@ -4,11 +4,11 @@ import requests
 from datetime import datetime
 from pytz import timezone
 
-import config
-from mmg import get_bookings
+import src.config as config
+from src.mmg import get_bookings, create_safety_topic, Weather
 
 
-class TestStringMethods(unittest.TestCase):
+class TestGetBookings(unittest.TestCase):
 
     def setUp(self):
         config.load()
@@ -93,6 +93,30 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(booking.all_day, False)
         self.assertEqual(booking.start_at.isoformat(), self.now.isoformat())
         self.assertEqual(booking.end_at.isoformat(), self.now.isoformat())
+
+
+class TestSafetyTopic(unittest.TestCase):
+    def setUp(self):
+        self.heat_stroke = [
+            Weather(datetime.now(), 'Sunny', 29, '10NE')
+            Weather(datetime.now(), 'Sunny', 30, '10NE')
+        ]
+        self.safety_topic = create_safety_topic(weather=self.heat_stroke)
+        self.no_heat_stroke = [
+            Weather(datetime.now(), 'Sunny', 29, '10NE')
+        ]
+
+    def tearDown(self):
+        return
+
+    def test_heat_stroke_warning(self):
+        self.safety_topic = create_safety_topic(weather=self.heat_stroke)
+        self.assertEqual(self.safety_topic, 'Heat Exhaustion')
+
+    def test_no_heat_stroke_warning(self):
+        self.safety_topic = create_safety_topic(weather=self.no_heat_stroke)
+        self.assertEqual(self.safety_topic, '')
+
 
 
 if __name__ == '__main__':

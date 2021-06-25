@@ -22,7 +22,7 @@ import json
 import sys
 import logging
 
-import config
+import src.config as config
 
 logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
                     level=logging.INFO, filename='mmg.log', filemode='a')
@@ -125,6 +125,12 @@ def main():
         logging.error('invalid output location, path to directory does not exist')
         sys.exit()
     logging.info('document successfully created')
+
+def create_safety_topic(weather=None):
+    safety_topics = list()
+    if weather and any(hour.temp >= 30 for hour in weather):
+        safety_topics.append('Heat Exhaustion')
+    return '\n'.join(safety_topics)
 
 
 def get_tides() -> list:
