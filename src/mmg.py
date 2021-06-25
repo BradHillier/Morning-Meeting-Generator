@@ -22,7 +22,6 @@ import json
 import sys
 import logging
 
-import src.config as config
 
 logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
                     level=logging.INFO, filename='mmg.log', filemode='a')
@@ -34,7 +33,7 @@ logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
 class Weather:
     date: datetime
     description: str
-    temp: str
+    temp: int
     wind: str
 
     def __str__(self):
@@ -50,12 +49,23 @@ class Weather:
 @dataclass
 class Tide:
     time: datetime
-    meters: int
-    feet: int
+    meters: float
+    feet: float
+
+    def is_too_low_for_woods(self) -> bool:
+        return self.meters <= 0.6
+
+    def is_within_operational_hours(self) -> bool:
+
+        # TODO: make operational hours dynamic, config file?
+        return 9 <= self.time.hour <= 16
 
     def __str__(self):
         time = self.time.strftime('%-I:%M %p')
         return f'{self.meters}m @ {time}'
+
+    def __repr__(self):
+        return string(self)
 
 
 @dataclass 
@@ -78,7 +88,7 @@ def main():
     datestring = datetime.now().strftime('%A - %B %d - %Y')
     tides = get_tides()
     weather = get_weather(10, 17)
-    bookings = get_bookings(config.CONFIG('cal_id'))
+    bookings = get_bookings(config.CONFIG['calendar ID'])
 
     document = Document()
     document.add_heading('Daily Safety Meeting', 0)
@@ -88,9 +98,12 @@ def main():
     p = document.add_paragraph()
     for name in config.CONFIG['employees']:
         p.add_run(f'\u2751 {name}        ')
-    for section in ['Safety Topic', 'General Notes/Maintenance']:
-        document.add_heading(section, 2)
-        document.add_paragraph('\n' * 2)
+
+    document.add_heading('Safety Topic', 2)
+    document.add_paragraph(create_safety_topic(weather, tides))
+    
+    document.add_heading('General Notes/Maintenance', 2)
+    document.add_paragraph('\n' * 2)
 
     document.add_heading('Tides', 2)
     tides_table = document.add_table(rows=0, cols=3)
@@ -106,7 +119,7 @@ def main():
         col = wx_table.columns[i]
         col.cells[0].text = weather[i].date.strftime('%-I:%M %p')
         col.cells[1].text = emoji_from_description(weather[i].description)
-        col.cells[2].text = weather[i].temp + u'\N{DEGREE SIGN}' + 'C',
+        col.cells[2].text = f'{weather[i].temp}\N{DEGREE SIGN} C',
         col.cells[3].text = weather[i].wind
 
     document.add_heading('Bookings', 2)
@@ -126,10 +139,13 @@ def main():
         sys.exit()
     logging.info('document successfully created')
 
-def create_safety_topic(weather=None):
+def create_safety_topic(weather=None, tides=None):
     safety_topics = list()
     if weather and any(hour.temp >= 30 for hour in weather):
         safety_topics.append('Heat Exhaustion')
+    if tides and any(tide.is_too_low_for_woods() for tide in tides \
+                     if tide.is_within_operational_hours()):
+        safety_topics.append('Too low to go behind woods')
     return '\n'.join(safety_topics)
 
 
@@ -146,7 +162,10 @@ def get_tides() -> list:
     meters = soup.table.tbody.findAll('td', class_='heightMeters')
     feet = soup.table.tbody.findAll('td', class_='heightFeet')
 
-    tides = [Tide(dateparser.parse(time[i].text), meters[i].text, feet[i].text,) \
+    tides = [Tide(dateparser.parse(
+                    time[i].text), 
+                    float(meters[i].text),
+                    float(feet[i].text,)) \
             for i in range(len(time))]
 
     return [tide for tide in tides]
@@ -223,7 +242,7 @@ def parse_weather_from_webelement(column: webdriver.remote.webelement.WebElement
 
     date = next_occurence(weekday, time)
     description = column.find_element_by_xpath('.//*[@class="wx_description"]').text
-    temp = column.find_element_by_xpath('.//*[@class="wxperiod_temp"]').text
+    temp = int(column.find_element_by_xpath('.//*[@class="wxperiod_temp"]').text)
     wind = column.find_elements_by_class_name('stripeable')[wind_index].text
 
     return Weather(date, description, temp, wind)
@@ -342,4 +361,7 @@ def log_response(res):
 
 
 if __name__ == '__main__':
+    import config
     main()
+else:
+    import src.config as config
