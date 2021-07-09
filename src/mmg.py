@@ -65,7 +65,7 @@ class Tide:
         return f'{self.meters}m @ {time}'
 
     def __repr__(self):
-        return string(self)
+        return str(self)
 
 
 @dataclass 
@@ -85,13 +85,13 @@ class Booking:
 def main():
     logging.info('program started')
     config.load()
-    datestring = datetime.now().strftime('%A - %B %d - %Y')
     tides = get_tides()
     weather = get_weather(10, 17)
     bookings = get_bookings(config.CONFIG['calendar ID'])
 
     document = Document()
     document.add_heading('Daily Safety Meeting', 0)
+    datestring = datetime.now().strftime('%A - %B %d - %Y')
     document.add_paragraph(datestring)
 
     document.add_heading('Attendants', 2)
@@ -107,7 +107,7 @@ def main():
 
     document.add_heading('Tides', 2)
     tides_table = document.add_table(rows=0, cols=3)
-    for tide in tides:
+    for tide in tides['high and low']:
         row_cells = tides_table.add_row().cells
         row_cells[0].text = tide.time.strftime('%-I:%M %p')
         row_cells[1].text = f'{tide.meters} meters'
@@ -142,10 +142,15 @@ def main():
 def create_safety_topic(weather=None, tides=None):
     safety_topics = list()
     if weather and any(hour.temp >= 30 for hour in weather):
-        safety_topics.append('Heat Exhaustion')
-    if tides and any(tide.is_too_low_for_woods() for tide in tides \
-                     if tide.is_within_operational_hours()):
-        safety_topics.append('Too low to go behind woods')
+        safety_topics.append(
+            '''Watch out for Heat Exhaustion. Alternate staff working in the sun, drink plenty of water''')
+    woods_inaccessible = [tide for tide in tides['hourly'] if \
+                         tide.is_too_low_for_woods()]
+    if any(tide.is_within_operational_hours() for tide in woods_inaccessible):
+        start = woods_inaccessible[0].time.strftime('%I%p')
+        end = woods_inaccessible[-1].time.strftime('%I%p')
+        safety_topics.append(
+            f'Tides too low to access channel behind Woods Island from {start} to {end}')
     return '\n'.join(safety_topics)
 
 
@@ -157,18 +162,32 @@ def get_tides() -> list:
     res = requests.get(url)
     log_response(res)
     soup = BeautifulSoup(res.content, 'html.parser')
+    tides = {}
+    tides['high and low'] = parse_high_and_low_tides(soup)
+    tides['hourly'] = parse_hourly_tides(soup)
+    return tides
 
+
+def parse_high_and_low_tides(soup: BeautifulSoup) -> list:
     time = soup.table.tbody.findAll('td', class_='time')
     meters = soup.table.tbody.findAll('td', class_='heightMeters')
     feet = soup.table.tbody.findAll('td', class_='heightFeet')
-
-    tides = [Tide(dateparser.parse(
+    return [Tide(dateparser.parse(
                     time[i].text), 
                     float(meters[i].text),
                     float(feet[i].text,)) \
             for i in range(len(time))]
 
-    return [tide for tide in tides]
+def parse_hourly_tides(soup: BeautifulSoup) -> list:
+    table = soup.find(title='Predicted Hourly Heights (m)').tbody
+    raw_tides = table.tr.find_all('td')
+    tides = list()
+    for i in range(24):
+        date = dateparser.parse('midnight today').replace(hour=i)
+        meters = 0.5
+        feet = '%.1f'%(meters * 3.2808)
+        tides.append(Tide(date, meters, feet))
+    return tides
         
 
 # No APIs I looked at offered hourly weather data for free, and content is

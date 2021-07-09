@@ -109,11 +109,14 @@ class TestSafetyTopic(unittest.TestCase):
             Weather(day.replace(hour=16), 'Sunny', 20, '10N'),
             Weather(day.replace(hour=17), 'Sunny', 20, '10N')
         ]
-        self.tides = [
-            Tide(time=day.replace(hour=3, minute=8), meters=1, feet=3.3),
-            Tide(time=day.replace(hour=8, minute=5), meters=2.4, feet=7.9),
-            Tide(time=day.replace(hour=15, minute=13), meters=1, feet=3.3),
-            Tide(time=day.replace(hour=22, minute=52), meters=2.4, feet=7.9)
+        self.tides = {
+            'high and low': {
+                Tide(time=day.replace(hour=3, minute=8), meters=1, feet=3.3),
+                Tide(time=day.replace(hour=8, minute=5), meters=2.4, feet=7.9),
+                Tide(time=day.replace(hour=15, minute=13), meters=1, feet=3.3),
+                Tide(time=day.replace(hour=22, minute=52), meters=2.4, feet=7.9)
+            }
+            'hourly': {}
         ]
 
     def _adjust_temp(self, temp: int, start_hour: int, end_hour: int):
@@ -132,7 +135,8 @@ class TestSafetyTopic(unittest.TestCase):
     def test_heatstroke_warning(self):
         self._adjust_temp(temp=30, start_hour=11, end_hour=16)
         self.safety_topic = create_safety_topic(weather=self.weather)
-        self.assertEqual(self.safety_topic, 'Heat Exhaustion')
+        self.assertEqual(self.safety_topic, 
+             '''Watch out for Heat Exhaustion. Alternate staff working in the sun, drink plenty of water''')
 
     def test_too_low_to_go_behind_woods_warning(self):
         """
@@ -160,7 +164,7 @@ class TestSafetyTopic(unittest.TestCase):
         self.safety_topic = create_safety_topic(
             weather=self.weather, tides=self.tides)
         self.assertEqual(self.safety_topic, 
-                         'Heat Exhaustion\nToo low to go behind woods')
+            '''Watch out for Heat Exhaustion. Alternate staff working in the sun, drink plenty of water\nToo low to go behind woods''')
 
 
 
