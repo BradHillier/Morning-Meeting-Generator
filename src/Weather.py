@@ -14,7 +14,7 @@ class Weather:
 
     def __str__(self):
         attrs = [
-            self.date.strftime('%-I %p'),
+            self.date.strftime('%-I%p'),
             self.description,
             self.temp + u'\N{DEGREE SIGN}' + 'C',
             self.wind

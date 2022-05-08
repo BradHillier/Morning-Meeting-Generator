@@ -35,7 +35,7 @@ class MeetingDocumentGenerator:
     def __init__(self):
         config.load()
         self.document = Document()
-        self.tides: dict = get_tides()
+        self.tides: dict[str, list[Tide]] = get_tides()
         self.weather: list[Weather] = get_weather(10,18)
         self.bookings: list[Booking] = get_bookings(config.CONFIG['calendar ID'])
 
@@ -72,26 +72,25 @@ class MeetingDocumentGenerator:
     def _add_safety_topic(self, weather=None, tides=None):
         self.document.add_heading('Safety Topic', 2)
         safety_topics = list()
-        if weather and any(hour.temp >= 30 for hour in weather):
-            safety_topics.append(
-                '''Watch out for Heat Exhaustion. Alternate staff working in the sun, drink plenty of water''')
-        woods_inaccessible = [tide for tide in tides['hourly'] if \
-                             tide.is_too_low_for_woods()]
-        if any(tide.is_within_operational_hours() for tide in woods_inaccessible):
-            start = woods_inaccessible[0].time.strftime('%I%p')
-            end = woods_inaccessible[-1].time.strftime('%I%p')
-            safety_topics.append(
-                f'Tides too low to access channel behind Woods Island from {start} to {end}')
+       #  if weather and any(hour.temp >= 30 for hour in weather):
+       #      safety_topics.append(
+       #          '''Watch out for Heat Exhaustion. Alternate staff working in the sun, drink plenty of water''')
+       #  woods_inaccessible = [tide for tide in tides['hourly'] if \
+       #                       tide.is_too_low_for_woods()]
+       #  if any(tide.is_within_operational_hours() for tide in woods_inaccessible):
+       #      start = woods_inaccessible[0].time.strftime('%I%p')
+       #      end = woods_inaccessible[-1].time.strftime('%I%p')
+       #      safety_topics.append(
+       #          f'Tides too low to access channel behind Woods Island from {start} to {end}')
         self.document.add_paragraph('\n'.join(safety_topics))
 
     def _add_tides(self):
         self.document.add_heading('Tides', 2)
-        tides_table = self.document.add_table(rows=0, cols=3)
-        for tide in self.tides['high and low']:
-            row_cells = tides_table.add_row().cells
-            row_cells[0].text = tide.time.strftime('%-I:%M %p')
-            row_cells[1].text = f'{tide.meters} meters'
-            row_cells[2].text = f'{tide.feet} feet'
+        tides_table = self.document.add_table(rows=2, cols=4)
+        for idx, tide in enumerate(self.tides['high and low']):
+            column_cells = tides_table.column_cells(idx)
+            column_cells[0].text = tide.time.strftime('%-I:%M %p')
+            column_cells[1].text = f'{tide.meters} meters'
 
 
     def _add_weather(self):
@@ -99,7 +98,7 @@ class MeetingDocumentGenerator:
         wx_table = self.document.add_table(rows=4, cols=len(self.weather))
         for i in range(len(wx_table.columns)):
             col = wx_table.columns[i]
-            col.cells[0].text = self.weather[i].date.strftime('%-I:%M %p')
+            col.cells[0].text = self.weather[i].date.strftime('%-I%p').lower()
             col.cells[1].text = self.weather[i].emoji
             col.cells[2].text = f'{self.weather[i].temp}\N{DEGREE SIGN} C',
             col.cells[3].text = self.weather[i].wind

@@ -5,3 +5,4 @@ selenium
 dataclasses
 dateparser
 datetime
+tkinter

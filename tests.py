@@ -115,7 +115,7 @@ class TestSafetyTopic(unittest.TestCase):
                 Tide(time=day.replace(hour=8, minute=5), meters=2.4, feet=7.9),
                 Tide(time=day.replace(hour=15, minute=13), meters=1, feet=3.3),
                 Tide(time=day.replace(hour=22, minute=52), meters=2.4, feet=7.9)
-            }
+            },
             'hourly': {}
         ]
 

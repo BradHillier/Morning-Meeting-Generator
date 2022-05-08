@@ -30,20 +30,22 @@ class Tide:
 
 def get_tides() -> list:
     '''Retreive today's tides from 'Fisheries and Oceans Canada'.'''
-    now = datetime.now()
-    url = 'https://tides.gc.ca/eng/station?type=0&date={}%2F{}%2F{}&sid=7460&tz=PDT&pres=1'.format(
-        now.year, '%02d'%now.month, now.day)
+    url = 'https://tides.gc.ca/en/stations/7460'
     res = requests.get(url)
     soup = BeautifulSoup(res.content, 'html.parser')
     tides = {}
     tides['high and low'] = parse_high_and_low_tides(soup)
-    tides['hourly'] = parse_hourly_tides(soup)
+    # tides['hourly'] = parse_hourly_tides(soup)
     return tides
 
 def parse_high_and_low_tides(soup: BeautifulSoup) -> list:
-    time = soup.table.tbody.findAll('td', class_='time')
-    meters = soup.table.tbody.findAll('td', class_='heightMeters')
-    feet = soup.table.tbody.findAll('td', class_='heightFeet')
+    tide_table_id = datetime.now().strftime('day-table-%Y-%m-%d')
+    todays_table = soup.find(id=tide_table_id) 
+    table_rows = todays_table.tbody.find_all('tr')
+
+    time = [row.find_all('td')[0] for row in table_rows]
+    meters = [row.find_all('td')[1] for row in table_rows]
+    feet = [row.find_all('td')[2] for row in table_rows]
     return [Tide(dateparser.parse(
                     time[i].text), 
                     float(meters[i].text),

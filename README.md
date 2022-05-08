@@ -1,5 +1,7 @@
 # Morning Meeting Generator
 
+must run brew install python3-tk on macOS
+
 This project was created to generate the morning meeting document for [Sealegs
 Kayaking Adventures](https://sealegskayaking.com) in Ladysmith, BC.
 Information was to be gathered daily from multiple websites and written down

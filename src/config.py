@@ -12,7 +12,7 @@ import requests
 def load():
     '''Load or create a config file'''
     try:
-        with open('config.json') as f:
+        with open('../config.json') as f:
             global CONFIG 
             CONFIG = json.load(f)
     except FileNotFoundError:
