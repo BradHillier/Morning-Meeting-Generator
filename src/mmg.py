@@ -67,7 +67,7 @@ class MeetingDocumentGenerator:
         self.document.add_heading('Attendants', 2)
         p = self.document.add_paragraph()
         for name in config.CONFIG['employees']:
-            p.add_run(f'\u2751 {name}')
+            p.add_run(f'\u2751 {name}        ')
 
     def _add_safety_topic(self, weather=None, tides=None):
         self.document.add_heading('Safety Topic', 2)
