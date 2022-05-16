@@ -35,7 +35,7 @@ def get_tides() -> list:
     soup = BeautifulSoup(res.content, 'html.parser')
     tides = {}
     tides['high and low'] = parse_high_and_low_tides(soup)
-    # tides['hourly'] = parse_hourly_tides(soup)
+    tides['hourly'] = parse_hourly_tides(soup)
     return tides
 
 def parse_high_and_low_tides(soup: BeautifulSoup) -> list:
@@ -53,12 +53,22 @@ def parse_high_and_low_tides(soup: BeautifulSoup) -> list:
             for i in range(len(time))]
 
 def parse_hourly_tides(soup: BeautifulSoup) -> list:
-    table = soup.find(title='Predicted Hourly Heights (m)').tbody
-    raw_tides = table.tr.find_all('td')
+    table = soup.find(id="readings-list-hourly-heights").tbody
+
+    # exclude the first td, which contains the date
+    raw_tides = table.find('tr').find_all('td')[1:]
     tides = list()
     for i in range(24):
         date = dateparser.parse('midnight today').replace(hour=i)
-        meters = 0.5
-        feet = '%.1f'%(meters * 3.2808)
+
+        # Handle a blank td in table row
+        if raw_tides[i].text == '':
+           meters = None
+           feet = None
+        else:
+           meters = float(raw_tides[i].text)
+           feet = '%.1f'%(meters * 3.2808)
+
         tides.append(Tide(date, meters, feet))
+    import pdb; pdb.set_trace()
     return tides
