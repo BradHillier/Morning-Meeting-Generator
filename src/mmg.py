@@ -6,31 +6,17 @@ generate the morning meeting self.document for Sealegs Kayaking Adventures
 in Ladysmith, BC
 """
 
-
-
-from dataclasses import dataclass, field
 from datetime import datetime
-from bs4 import BeautifulSoup
 from docx import Document
-from time import sleep
-import requests
-import dateparser
-import pytz
 import os.path
-import json
 import sys
-import logging
 
 from Tide import get_tides
 from Weather import get_weather
 from Booking import get_bookings
-from safetyTopic import SafetyTopics 
+from SafetyTopics import SafetyTopics 
 
 import config
-
-
-logging.basicConfig(format='%(asctime)s | %(levelname)s | %(message)s',
-                    level=logging.INFO, filename='mmg.log', filemode='a')
 
 
 class MeetingDocumentGenerator:
@@ -62,9 +48,9 @@ class MeetingDocumentGenerator:
             self.document.save(config.CONFIG['output location'] + 'morning_meeting_' + 
                           datetime.now().strftime('%d-%m-%y') + '.docx')
         except FileNotFoundError:
-            logging.error('invalid output location, path to directory does not exist')
+            print('invalid output location, path to directory does not exist')
             sys.exit()
-        logging.info('self.document successfully created')
+        print('self.document successfully created')
 
     def _add_attendants(self):
         self.document.add_heading('Attendants', 2)
