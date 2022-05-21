@@ -13,7 +13,10 @@ class Tide:
     feet: float
 
     def is_too_low_for_woods(self) -> bool:
-        return self.meters <= 0.6
+         
+        # self.meters will always be None for the first tide of the day
+        # hence the need to check that it exists
+        return self.meters and self.meters <= 0.6
 
     def is_within_operational_hours(self) -> bool:
 
@@ -70,5 +73,4 @@ def parse_hourly_tides(soup: BeautifulSoup) -> list:
            feet = '%.1f'%(meters * 3.2808)
 
         tides.append(Tide(date, meters, feet))
-    import pdb; pdb.set_trace()
     return tides

@@ -24,6 +24,8 @@ import logging
 from Tide import get_tides
 from Weather import get_weather
 from Booking import get_bookings
+from safetyTopic import SafetyTopics 
+
 import config
 
 
@@ -38,6 +40,7 @@ class MeetingDocumentGenerator:
         self.tides: dict[str, list[Tide]] = get_tides()
         self.weather: list[Weather] = get_weather(10,18)
         self.bookings: list[Booking] = get_bookings(config.CONFIG['calendar ID'])
+        self.safety_topics = SafetyTopics(self)
 
     def generate(self):
         datestring = datetime.now().strftime('%A - %B %d - %Y')
@@ -67,22 +70,11 @@ class MeetingDocumentGenerator:
         self.document.add_heading('Attendants', 2)
         p = self.document.add_paragraph()
         for name in config.CONFIG['employees']:
-            p.add_run(f'\u2751 {name}        ')
+            p.add_run(f'\u2751 {name}         ')
 
     def _add_safety_topic(self, weather=None, tides=None):
-        self.document.add_heading('Safety Topic', 2)
-        safety_topics = list()
-       #  if weather and any(hour.temp >= 30 for hour in weather):
-       #      safety_topics.append(
-       #          '''Watch out for Heat Exhaustion. Alternate staff working in the sun, drink plenty of water''')
-       #  woods_inaccessible = [tide for tide in tides['hourly'] if \
-       #                       tide.is_too_low_for_woods()]
-       #  if any(tide.is_within_operational_hours() for tide in woods_inaccessible):
-       #      start = woods_inaccessible[0].time.strftime('%I%p')
-       #      end = woods_inaccessible[-1].time.strftime('%I%p')
-       #      safety_topics.append(
-       #          f'Tides too low to access channel behind Woods Island from {start} to {end}')
-        self.document.add_paragraph('\n'.join(safety_topics))
+         self.document.add_heading('Safety Topic', 2)
+         self.document.add_paragraph('\n'.join(self.safety_topics.topics))
 
     def _add_tides(self):
         self.document.add_heading('Tides', 2)
