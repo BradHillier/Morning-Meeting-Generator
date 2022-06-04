@@ -8,11 +8,12 @@ in Ladysmith, BC
 
 from datetime import datetime
 from docx import Document
+from docx.shared import Inches
 import os.path
 import sys
 
 from Tide import get_tides
-from Weather import get_weather
+from Weather import get_api_weather
 from Booking import get_bookings
 from SafetyTopics import SafetyTopics 
 
@@ -24,7 +25,7 @@ class MeetingDocumentGenerator:
         config.load()
         self.document = Document()
         self.tides: dict[str, list[Tide]] = get_tides()
-        self.weather: list[Weather] = get_weather(10,18)
+        self.weather: list[Weather] = get_api_weather(10,18, config.CONFIG['api key'])
         self.bookings: list[Booking] = get_bookings(config.CONFIG['calendar ID'])
         self.safety_topics = SafetyTopics(self)
 
@@ -35,8 +36,9 @@ class MeetingDocumentGenerator:
 
         self._add_attendants()
         self._add_safety_topic(self.weather, self.tides)
-        
         self.document.add_heading('General Notes/Maintenance', 2)
+
+        #  Leave white space for employees to write in
         self.document.add_paragraph('\n' * 2)
 
         self._add_tides()
@@ -56,6 +58,8 @@ class MeetingDocumentGenerator:
         self.document.add_heading('Attendants', 2)
         p = self.document.add_paragraph()
         for name in config.CONFIG['employees']:
+            
+            # Check box
             p.add_run(f'\u2751 {name}         ')
 
     def _add_safety_topic(self, weather=None, tides=None):
@@ -77,8 +81,15 @@ class MeetingDocumentGenerator:
         for i in range(len(wx_table.columns)):
             col = wx_table.columns[i]
             col.cells[0].text = self.weather[i].date.strftime('%-I%p').lower()
-            col.cells[1].text = self.weather[i].emoji
-            col.cells[2].text = f'{self.weather[i].temp}\N{DEGREE SIGN} C',
+
+            # TODO: clean this up, maybe move to a seperate function; fix path use proper python dir path
+            pic_path = f"/Users/bradhillier/Downloads/{self.weather[i].emoji}"
+            para = col.cells[1].paragraphs[0]
+            format = para.paragraph_format
+            run = para.add_run()
+            run.add_picture(pic_path, width=Inches(.35))
+
+            col.cells[2].text = str(self.weather[i].temp) + u'\N{DEGREE SIGN}' + 'C'
             col.cells[3].text = self.weather[i].wind
 
     def _add_bookings(self):
