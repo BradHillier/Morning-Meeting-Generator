@@ -10,12 +10,11 @@ from datetime import datetime
 from docx import Document
 from docx.shared import Inches
 from pathlib import Path
-import os.path
 import sys
 
-from Tide import get_tides
-from Weather import get_api_weather
-from Booking import get_bookings
+from Tide import *
+from Weather import *
+from Booking import *
 from SafetyTopics import SafetyTopics 
 
 import config
