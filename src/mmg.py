@@ -28,6 +28,7 @@ class MeetingDocumentGenerator:
         self.weather: list[Weather] = get_api_weather(10,18, config.CONFIG['api key'])
         self.bookings: list[Booking] = get_bookings(config.CONFIG['calendar ID'])
         self.safety_topics = SafetyTopics(self)
+        self.project_dir = Path(__file__).absolute().parent.parent
 
     def generate(self):
         datestring = datetime.now().strftime('%A - %B %d - %Y')
@@ -83,7 +84,7 @@ class MeetingDocumentGenerator:
             col.cells[0].text = self.weather[i].date.strftime('%-I%p').lower()
 
             # TODO: clean this up, maybe move to a seperate function; fix path use proper python dir path
-            pic_path = f"/Users/bradhillier/Downloads/{self.weather[i].emoji}"
+            pic_path = f"{self.project_dir}/{self.weather[i].emoji}"
             para = col.cells[1].paragraphs[0]
             format = para.paragraph_format
             run = para.add_run()

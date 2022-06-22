@@ -7,12 +7,14 @@ config properties will be available as a global dictionary after load() is run
 import json
 import sys
 import requests
+from pathlib import Path
 
 
 def load():
     '''Load or create a config file'''
+    project_dir = Path(__file__).absolute().parent.parent
     try:
-        with open('/Users/bradhillier/Developer/morning_meeting_generator/config.json') as f:
+        with open(f'{project_dir}/config.json') as f:
             global CONFIG 
             CONFIG = json.load(f)
     except FileNotFoundError:
@@ -78,7 +80,6 @@ def get_calendars(token: str):
                'Authorization': f'Bearer {token}'
               }
     res = requests.get(base_url, headers=headers)
-    print(res.content)
     if res.ok:
         raw_calendars = res.json()['data']
         return [(cal['attributes']['name'], cal['id']) for cal in raw_calendars]
