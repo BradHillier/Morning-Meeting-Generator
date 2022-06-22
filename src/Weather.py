@@ -12,13 +12,15 @@ class Weather:
     emoji: str
     temp: int
     wind: str
+    uv: int
 
     def __str__(self):
         attrs = [
             self.date.strftime('%-I%p'),
             self.description,
-            self.temp + u'\N{DEGREE SIGN}' + 'C',
-            self.wind
+            str(self.temp) + u'\N{DEGREE SIGN}' + 'C',
+            self.wind,
+            str(self.uv)
         ]
         return ' - '.join(attrs)
 
@@ -47,7 +49,7 @@ def get_api_weather(start_time: int, end_time: int, api_key: str) -> list[Weathe
    return hourly_wx
 
 
-def parse_api_hour(hour: dict):
+def parse_api_hour(hour: dict) -> Weather:
     """
     given a dict contain the raw output from the weather API,
     create a weather object and return it
@@ -60,4 +62,5 @@ def parse_api_hour(hour: dict):
     emoji = hour['condition']['icon'][20:]
     temp = ceil(hour['temp_c'])
     wind = f"{hour['wind_dir']} {round(hour['wind_kph'])}"
-    return Weather(date, description, emoji, temp, wind)
+    uv = hour['uv']
+    return Weather(date, description, emoji, temp, wind, uv)
