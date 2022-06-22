@@ -9,6 +9,7 @@ in Ladysmith, BC
 from datetime import datetime
 from docx import Document
 from docx.shared import Inches
+from pathlib import Path
 import os.path
 import sys
 
@@ -84,7 +85,7 @@ class MeetingDocumentGenerator:
             col.cells[0].text = self.weather[i].date.strftime('%-I%p').lower()
 
             # TODO: clean this up, maybe move to a seperate function; fix path use proper python dir path
-            pic_path = f"{self.project_dir}/{self.weather[i].emoji}"
+            pic_path = f"{self.project_dir}/img{self.weather[i].emoji}"
             para = col.cells[1].paragraphs[0]
             format = para.paragraph_format
             run = para.add_run()
