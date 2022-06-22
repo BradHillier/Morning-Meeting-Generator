@@ -69,7 +69,8 @@ def split_hours(hrs):
          curr_split.append(hr)
       else:
          splits.append(curr_split)
-         curr_split.clear()
+         curr_split = list()
+         curr_split.append(hr)
    splits.append(curr_split)
    return splits
 
