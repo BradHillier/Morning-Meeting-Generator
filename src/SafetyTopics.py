@@ -9,7 +9,7 @@ class SafetyTopics:
 
       # contains strings with individual safety topic information for day
       # if no safety topics for the day, the list will be empty
-      self.topics: list[Str] = list()      
+      self.topics: list[str] = list()      
 
       # the document which the safety topics will be added to
       # this is included so weather and tide information can be accessed 
