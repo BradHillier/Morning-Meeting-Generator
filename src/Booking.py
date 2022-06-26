@@ -14,8 +14,8 @@ class Booking:
     end_at: datetime
 
     def __str__(self):
-        start = self.start_at.strftime('%-I:%M %p')
-        end = self.end_at.strftime('%-I:%M %p')
+        start = self.start_at.strftime('%I:%M %p').strip('0')
+        end = self.end_at.strftime('%I:%M %p').strip('0')
         return f'{self.title} from {start} to {end}'
 
 

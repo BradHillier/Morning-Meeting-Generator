@@ -24,7 +24,7 @@ class Tide:
         return 9 <= self.time.hour <= 16
 
     def __str__(self):
-        time = self.time.strftime('%-I:%M %p')
+        time = self.time.strftime('%I:%M %p').strip('0')
         return f'{self.meters}m @ {time}'
 
     def __repr__(self):

@@ -40,8 +40,8 @@ class SafetyTopics:
                  tide.is_too_low_for_woods()]
       if any(tide.is_within_operational_hours() \
                  for tide in woods_inaccessible):
-         start = woods_inaccessible[0].time.strftime('%-I %p')
-         end = woods_inaccessible[-1].time.strftime('%-I %p')
+         start = woods_inaccessible[0].time.strftime('%I %p').strip('0')
+         end = woods_inaccessible[-1].time.strftime('%I %p').strip('0')
          pt1 = 'Tides too low to access channel behind Woods Island'
          pt2 = f' from {start} to {end}'
          self.topics.append(pt1 + pt2)
@@ -51,7 +51,7 @@ class SafetyTopics:
       dangerous_hours = list(filter(lambda hr : hr.uv >= danger, self.doc.weather))
       if (len(dangerous_hours) > 0):
          for split in split_hours(dangerous_hours):
-            warning = f'Wear sunscreen. The UV-index is high today from {split[0].date.strftime("%-I %p")} until {split[-1].date.strftime("%-I %p")}'
+            warning = f'Wear sunscreen. The UV-index is high today from {split[0].date.strftime("%I %p").strip("0")} until {split[-1].date.strftime("%I %p").strip("0")}'
             self.topics.append(warning)
             
 

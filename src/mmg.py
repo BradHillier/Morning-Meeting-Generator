@@ -72,7 +72,7 @@ class MeetingDocumentGenerator:
         tides_table = self.document.add_table(rows=2, cols=4)
         for idx, tide in enumerate(self.tides['high and low']):
             column_cells = tides_table.column_cells(idx)
-            column_cells[0].text = tide.time.strftime('%-I:%M %p')
+            column_cells[0].text = tide.time.strftime('%I:%M %p').strip('0')
             column_cells[1].text = f'{tide.meters} meters'
 
 
@@ -81,7 +81,7 @@ class MeetingDocumentGenerator:
         wx_table = self.document.add_table(rows=4, cols=len(self.weather))
         for i in range(len(wx_table.columns)):
             col = wx_table.columns[i]
-            col.cells[0].text = self.weather[i].date.strftime('%-I%p').lower()
+            col.cells[0].text = self.weather[i].date.strftime('%I%p').lower().strip('0')
 
             # TODO: clean this up, maybe move to a seperate function; fix path use proper python dir path
             pic_path = f"{self.project_dir}/img{self.weather[i].emoji}"
@@ -98,7 +98,7 @@ class MeetingDocumentGenerator:
         bookings_table = self.document.add_table(rows=0, cols=2)
         for booking in self.bookings:
             row_cells = bookings_table.add_row().cells
-            start = booking.start_at.strftime('%-I:%M %p')
-            end = booking.end_at.strftime('%-I:%M %p')
+            start = booking.start_at.strftime('%I:%M %p').strip('0')
+            end = booking.end_at.strftime('%I:%M %p').strip('0')
             row_cells[0].text = f'{start} to {end}'
             row_cells[1].text = booking.title
