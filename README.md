@@ -29,7 +29,7 @@ git clone https://github.com/BradHillier/morning-meeting-generator.git
 ```
 Install the required libraries by running 
 ```
-pip3 install -r requirements.txt.
+pip install -r requirements.txt.
 ```
 
 ## Configuration
@@ -61,7 +61,7 @@ After following all the prompts and successfully completing the config file, the
   "personal access token": "YOUR_TIMETREE_PERSONAL_ACCESS_TOKEN",
   "calendar ID": "YOUR_TIMETREE_CALENDAR_ID",
   "output location": "PATH_TO_OUTPUT_FOLDER",
-  "api key": "YOU_WEATHER_API_KEY"
+  "api key": "YOUR_WEATHER_API_KEY"
 }
 ```
 To get your personal access token and calendar ID, you will need to sign up for a [TimeTree API account](https://developers.timetreeapp.com/en/docs/api/overview). To get your weather API key, you will need to sign up for a [WeatherAPI account](https://www.weatherapi.com).
