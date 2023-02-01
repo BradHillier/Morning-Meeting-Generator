@@ -6,7 +6,7 @@ Information was to be gathered daily from multiple websites and written down
 onto a meeting template.  This program automates the process and saves about 10
 minutes each morning.  
 
-![Meeting Document Screenshot](img/screenshots/meeting_document_screenshot.png)
+<img src="img/screenshots/meeting_document_screenshot.png" height=500>
 
 ## Requirements
 
