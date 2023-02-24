@@ -1,0 +1,610 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		94597D2C283AD14E00508A5A /* PythonKit in Frameworks */ = {isa = PBXBuildFile; productRef = 94597D2B283AD14E00508A5A /* PythonKit */; };
+		946024252832D82D0028A399 /* Morning_Meeting_GeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946024242832D82D0028A399 /* Morning_Meeting_GeneratorApp.swift */; };
+		946024272832D82D0028A399 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946024262832D82D0028A399 /* ContentView.swift */; };
+		946024292832D8310028A399 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 946024282832D8310028A399 /* Assets.xcassets */; };
+		9460242C2832D8310028A399 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9460242B2832D8310028A399 /* Preview Assets.xcassets */; };
+		946024372832D8310028A399 /* Morning_Meeting_GeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946024362832D8310028A399 /* Morning_Meeting_GeneratorTests.swift */; };
+		946024412832D8310028A399 /* Morning_Meeting_GeneratorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946024402832D8310028A399 /* Morning_Meeting_GeneratorUITests.swift */; };
+		946024432832D8310028A399 /* Morning_Meeting_GeneratorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946024422832D8310028A399 /* Morning_Meeting_GeneratorUITestsLaunchTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		946024332832D8310028A399 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 946024192832D82C0028A399 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 946024202832D82D0028A399;
+			remoteInfo = "Morning Meeting Generator";
+		};
+		9460243D2832D8310028A399 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 946024192832D82C0028A399 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 946024202832D82D0028A399;
+			remoteInfo = "Morning Meeting Generator";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		946024212832D82D0028A399 /* Morning Meeting Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Morning Meeting Generator.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		946024242832D82D0028A399 /* Morning_Meeting_GeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Morning_Meeting_GeneratorApp.swift; sourceTree = "<group>"; };
+		946024262832D82D0028A399 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		946024282832D8310028A399 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9460242B2832D8310028A399 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		9460242D2832D8310028A399 /* Morning_Meeting_Generator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Morning_Meeting_Generator.entitlements; sourceTree = "<group>"; };
+		946024322832D8310028A399 /* Morning Meeting GeneratorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Morning Meeting GeneratorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		946024362832D8310028A399 /* Morning_Meeting_GeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Morning_Meeting_GeneratorTests.swift; sourceTree = "<group>"; };
+		9460243C2832D8310028A399 /* Morning Meeting GeneratorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Morning Meeting GeneratorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		946024402832D8310028A399 /* Morning_Meeting_GeneratorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Morning_Meeting_GeneratorUITests.swift; sourceTree = "<group>"; };
+		946024422832D8310028A399 /* Morning_Meeting_GeneratorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Morning_Meeting_GeneratorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9460241E2832D82D0028A399 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94597D2C283AD14E00508A5A /* PythonKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9460242F2832D8310028A399 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		946024392832D8310028A399 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		946024182832D82C0028A399 = {
+			isa = PBXGroup;
+			children = (
+				946024232832D82D0028A399 /* Morning Meeting Generator */,
+				946024352832D8310028A399 /* Morning Meeting GeneratorTests */,
+				9460243F2832D8310028A399 /* Morning Meeting GeneratorUITests */,
+				946024222832D82D0028A399 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		946024222832D82D0028A399 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				946024212832D82D0028A399 /* Morning Meeting Generator.app */,
+				946024322832D8310028A399 /* Morning Meeting GeneratorTests.xctest */,
+				9460243C2832D8310028A399 /* Morning Meeting GeneratorUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		946024232832D82D0028A399 /* Morning Meeting Generator */ = {
+			isa = PBXGroup;
+			children = (
+				946024242832D82D0028A399 /* Morning_Meeting_GeneratorApp.swift */,
+				946024262832D82D0028A399 /* ContentView.swift */,
+				946024282832D8310028A399 /* Assets.xcassets */,
+				9460242D2832D8310028A399 /* Morning_Meeting_Generator.entitlements */,
+				9460242A2832D8310028A399 /* Preview Content */,
+			);
+			path = "Morning Meeting Generator";
+			sourceTree = "<group>";
+		};
+		9460242A2832D8310028A399 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				9460242B2832D8310028A399 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		946024352832D8310028A399 /* Morning Meeting GeneratorTests */ = {
+			isa = PBXGroup;
+			children = (
+				946024362832D8310028A399 /* Morning_Meeting_GeneratorTests.swift */,
+			);
+			path = "Morning Meeting GeneratorTests";
+			sourceTree = "<group>";
+		};
+		9460243F2832D8310028A399 /* Morning Meeting GeneratorUITests */ = {
+			isa = PBXGroup;
+			children = (
+				946024402832D8310028A399 /* Morning_Meeting_GeneratorUITests.swift */,
+				946024422832D8310028A399 /* Morning_Meeting_GeneratorUITestsLaunchTests.swift */,
+			);
+			path = "Morning Meeting GeneratorUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		946024202832D82D0028A399 /* Morning Meeting Generator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 946024462832D8310028A399 /* Build configuration list for PBXNativeTarget "Morning Meeting Generator" */;
+			buildPhases = (
+				9460241D2832D82D0028A399 /* Sources */,
+				9460241E2832D82D0028A399 /* Frameworks */,
+				9460241F2832D82D0028A399 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Morning Meeting Generator";
+			packageProductDependencies = (
+				94597D2B283AD14E00508A5A /* PythonKit */,
+			);
+			productName = "Morning Meeting Generator";
+			productReference = 946024212832D82D0028A399 /* Morning Meeting Generator.app */;
+			productType = "com.apple.product-type.application";
+		};
+		946024312832D8310028A399 /* Morning Meeting GeneratorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 946024492832D8310028A399 /* Build configuration list for PBXNativeTarget "Morning Meeting GeneratorTests" */;
+			buildPhases = (
+				9460242E2832D8310028A399 /* Sources */,
+				9460242F2832D8310028A399 /* Frameworks */,
+				946024302832D8310028A399 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				946024342832D8310028A399 /* PBXTargetDependency */,
+			);
+			name = "Morning Meeting GeneratorTests";
+			productName = "Morning Meeting GeneratorTests";
+			productReference = 946024322832D8310028A399 /* Morning Meeting GeneratorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9460243B2832D8310028A399 /* Morning Meeting GeneratorUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9460244C2832D8310028A399 /* Build configuration list for PBXNativeTarget "Morning Meeting GeneratorUITests" */;
+			buildPhases = (
+				946024382832D8310028A399 /* Sources */,
+				946024392832D8310028A399 /* Frameworks */,
+				9460243A2832D8310028A399 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9460243E2832D8310028A399 /* PBXTargetDependency */,
+			);
+			name = "Morning Meeting GeneratorUITests";
+			productName = "Morning Meeting GeneratorUITests";
+			productReference = 9460243C2832D8310028A399 /* Morning Meeting GeneratorUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		946024192832D82C0028A399 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1330;
+				LastUpgradeCheck = 1340;
+				TargetAttributes = {
+					946024202832D82D0028A399 = {
+						CreatedOnToolsVersion = 13.3.1;
+					};
+					946024312832D8310028A399 = {
+						CreatedOnToolsVersion = 13.3.1;
+						TestTargetID = 946024202832D82D0028A399;
+					};
+					9460243B2832D8310028A399 = {
+						CreatedOnToolsVersion = 13.3.1;
+						TestTargetID = 946024202832D82D0028A399;
+					};
+				};
+			};
+			buildConfigurationList = 9460241C2832D82C0028A399 /* Build configuration list for PBXProject "Morning Meeting Generator" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 946024182832D82C0028A399;
+			packageReferences = (
+				94597D2A283AD14E00508A5A /* XCRemoteSwiftPackageReference "PythonKit" */,
+			);
+			productRefGroup = 946024222832D82D0028A399 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				946024202832D82D0028A399 /* Morning Meeting Generator */,
+				946024312832D8310028A399 /* Morning Meeting GeneratorTests */,
+				9460243B2832D8310028A399 /* Morning Meeting GeneratorUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9460241F2832D82D0028A399 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9460242C2832D8310028A399 /* Preview Assets.xcassets in Resources */,
+				946024292832D8310028A399 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		946024302832D8310028A399 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9460243A2832D8310028A399 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9460241D2832D82D0028A399 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				946024272832D82D0028A399 /* ContentView.swift in Sources */,
+				946024252832D82D0028A399 /* Morning_Meeting_GeneratorApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9460242E2832D8310028A399 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				946024372832D8310028A399 /* Morning_Meeting_GeneratorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		946024382832D8310028A399 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				946024412832D8310028A399 /* Morning_Meeting_GeneratorUITests.swift in Sources */,
+				946024432832D8310028A399 /* Morning_Meeting_GeneratorUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		946024342832D8310028A399 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 946024202832D82D0028A399 /* Morning Meeting Generator */;
+			targetProxy = 946024332832D8310028A399 /* PBXContainerItemProxy */;
+		};
+		9460243E2832D8310028A399 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 946024202832D82D0028A399 /* Morning Meeting Generator */;
+			targetProxy = 9460243D2832D8310028A399 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		946024442832D8310028A399 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		946024452832D8310028A399 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		946024472832D8310028A399 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Morning Meeting Generator/Morning_Meeting_Generator.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Morning Meeting Generator/Preview Content\"";
+				DEVELOPMENT_TEAM = 8G68L7HV2F;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "None.Morning-Meeting-Generator";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		946024482832D8310028A399 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Morning Meeting Generator/Morning_Meeting_Generator.entitlements";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Morning Meeting Generator/Preview Content\"";
+				DEVELOPMENT_TEAM = 8G68L7HV2F;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "None.Morning-Meeting-Generator";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		9460244A2832D8310028A399 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8G68L7HV2F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "None.Morning-Meeting-GeneratorTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Morning Meeting Generator.app/Contents/MacOS/Morning Meeting Generator";
+			};
+			name = Debug;
+		};
+		9460244B2832D8310028A399 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8G68L7HV2F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "None.Morning-Meeting-GeneratorTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Morning Meeting Generator.app/Contents/MacOS/Morning Meeting Generator";
+			};
+			name = Release;
+		};
+		9460244D2832D8310028A399 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8G68L7HV2F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "None.Morning-Meeting-GeneratorUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Morning Meeting Generator";
+			};
+			name = Debug;
+		};
+		9460244E2832D8310028A399 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 8G68L7HV2F;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "None.Morning-Meeting-GeneratorUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = "Morning Meeting Generator";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9460241C2832D82C0028A399 /* Build configuration list for PBXProject "Morning Meeting Generator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				946024442832D8310028A399 /* Debug */,
+				946024452832D8310028A399 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		946024462832D8310028A399 /* Build configuration list for PBXNativeTarget "Morning Meeting Generator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				946024472832D8310028A399 /* Debug */,
+				946024482832D8310028A399 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		946024492832D8310028A399 /* Build configuration list for PBXNativeTarget "Morning Meeting GeneratorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9460244A2832D8310028A399 /* Debug */,
+				9460244B2832D8310028A399 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9460244C2832D8310028A399 /* Build configuration list for PBXNativeTarget "Morning Meeting GeneratorUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9460244D2832D8310028A399 /* Debug */,
+				9460244E2832D8310028A399 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		94597D2A283AD14E00508A5A /* XCRemoteSwiftPackageReference "PythonKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pvieito/PythonKit";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		94597D2B283AD14E00508A5A /* PythonKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 94597D2A283AD14E00508A5A /* XCRemoteSwiftPackageReference "PythonKit" */;
+			productName = PythonKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 946024192832D82C0028A399 /* Project object */;
+}
