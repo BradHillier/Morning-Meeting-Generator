@@ -10,3 +10,9 @@ output/
 .mmg.py.swm
 .mmg.py.swn
 .tests.py.swp
+
+*.swp
+*.swo
+*.swn
+*.swm
+.DS_Store

@@ -36,11 +36,15 @@ def get_bookings(cal_id) -> list:
             'timezone': 'America/Vancouver'
         })
 
-    raw_bookings = res.json()['data']
-    bookings = [create_booking_obj(raw) for raw in raw_bookings]
+    try:
+        raw_bookings = res.json()['data']
+        bookings = [create_booking_obj(raw) for raw in raw_bookings]
 
-    return [booking for booking in bookings if \
-           booking.start_at.day == datetime.now().day]
+        return [booking for booking in bookings if \
+               booking.start_at.day == datetime.now().day]
+    except KeyError as error:
+        print("ERROR: Unable to retrieve Booking Data")
+        return []
         
 
 
